@@ -88,7 +88,7 @@
     </style>
 </head>
 <body>
-    <div class="uk-container uk-container-small">
+    <div class="uk-container">
         <nav class="uk-navbar-container uk-margin-top" uk-navbar>
             <div class="uk-navbar-left">
                 <ul class="uk-navbar-nav">
@@ -123,22 +123,98 @@
             </div>
         </nav>
         
+        <!-- Логотип и форма генератора -->
         <div class="uk-margin-top">
             <div class="uk-card uk-card-default uk-card-body">
                 <div class="uk-text-center">
                     <img id="SecurityCode" class="uk-width-small" src="../img/securitycodelogo.jpg" alt="Logo Security Code">
                 </div>
                 
-                <p class="uk-text-justify uk-margin-top">
-                    Простенький генератор строк конфигурации КШ для последующего добавления в ЦУС. К сожалению не для всех аппаратных платформ, ввиду отсутствия у меня паспортов на оборудование где прописаны эти самые строки. Если вы можете мне <a href="mailto:visiostencil@mail.ru">прислать</a> фото строки конфигурации отсутствующего в списке оборудования, буду благодарен.
-                    <br /><br />
-                    Генерируются базовые конфигурации, если у вас вышел из строя интерфейс(ы) смотрите строку которую выдает сам континент при перепрошивке (после ввода номера КШ).
-                </p>
+                <form class="uk-form-stacked uk-margin-top" id="genForm" onsubmit="return false">
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="numksh">Номер КШ</label>
+                        <div class="uk-form-controls">
+                            <input class="uk-input" type="number" id="numksh" placeholder="Введите № КШ (не заводской номер)" required />
+                        </div>
+                    </div>
+                    
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="platform">Аппаратная платформа 
+                            <a href="#tipsPlatform" uk-icon="icon: question" uk-toggle></a>
+                        </label>
+                        <div class="uk-form-controls">
+                            <select class="uk-select platform-select" id="platform" required>
+                                <option selected value="3igb0*02BDigb1*02BDigb2*02BDffff">IPC-10(шасси LN-010A)</option>
+                            
+                                <option value="3re0*02BDre1*02BDre2*02BDffff">IPC-10(шасси S088)</option>
+                                
+                                <option value="2em0*02BDem1*02BDffff">IPC-25(шасси 9830)</option>
+                                
+                                <option value="4em0*02BDem1*02BDem2*02BDem3*02BDffff">IPC-25(шасси 92D9)</option>
+                                
+                                <option value="5igb0*3001igb1*02BDigb2*02BDigb3*02BDigb4*02BDffff">IPC-25(шасси S115)</option>
+                                
+                                <option value="5igb0*3001igb1*02BDigb2*02BDigb3*02BDigb4*02BDffff">IPC-50(шасси LN-010C)</option>
+                    
+                                <option value="5igb0*02BDigb1*02BDigb2*02BDigb3*02BDix0*0001ffff">IPC-R10 и IPC-R50 (шасси SC-R15)</option>
+                                
+                                <option value="8igb0*3001igb1*3001igb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-100(шасси G560)</option>
+                                
+                                <option value="8igb0*3001igb1*3001em0*02BDem1*02BDem2*02BDem3*02BDem4*02BDem5*02BDffff">IPC-100(шасси 92E3)</option>
+                                
+                                <option value="8igb0*3001igb1*3001igb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-100(шасси S102)</option>
+                                
+                                <option value="8igb0*02BDigb1*02BDigb2*02BDigb3*02BDix0*0001ix1*0001ix2*0215ix3*0215ffff">IPC-R300 и R550(шасси SC-R300)</option>
+                                
+                                <option value="6igb0*02BDigb1*02BDigb2*02BDigb3*02BDem0*02BDem1*02BDffff">IPC-400(шасси MS-9297)</option>
+                                
+                                <option value="6igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDffff">IPC-500(шасси LN-015B)</option>
+                                
+                                <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*3001igb5*3001igb6*02BDigb7*02BDigb8*02BDigb9*02BDffff">IPC-500F(шасси LN-015C)</option>
+                                
+                                <option value="8igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-600(шасси DV-030A)</option>
+                                
+                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDffff">IPC-800F(шасси DV-030B)</option>
+                                
+                                <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000(шасси S021)</option>
+                                
+                                <option value="10igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000F(шасси S021)</option>
+                                
+                                <option value="18igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDem0*02BDem1*02BDffff">IPC-1000F2(шасси S021)</option>
+                                
+                                <option value="16igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDffff">IPC-1000F(шасси DV-031B)</option>
+                                
+                                <option value="20ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*3001igb9*3001igb10*3001igb11*3001igb12*3001igb13*3001igb14*3001igb15*3001*02DBffff">IPC-1000NF2(шасси DV-031F)</option>
+    
+                                <option value="12ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-R1000 и R-800(шасси SC-R1000)</option>
+                                
+                                <option value="14ix0*0001ix1*0001igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDix2*0001ix3*0001ffff">IPC-3000F(шасси S021)</option>
+                                
+                                <option value="13igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801igb8*02DBffff">IPC-3000F(шасси LN-021)</option>
+                                
+                                <option value="16igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801ixl5*2E801ixl6*2E801ixl7*2E801igb8*02DBffff">IPC-3000FC(шасси LN-021A)</option>
+    
+                                <option value="17igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDix10*2E801ix11*2E801ix12*2E801ix13*2E801ix14*2E801ix15*2E801ix15*2E801ix16*2E801ix17*2E801ix18*02BDffff">IPC-3000NF2(шасси LN021E)</option>
+                                
+                                <option value="34igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDem0*02BDem1*02BDigb16*02BDigb17*02BDigb18*02BDigb19*02BDigb20*02BDigb21*02BDigb22*02BDigb23*02BDigb24*02BDigb25*02BDigb26*02BDigb27*02BDigb28*02BDigb29*02BDigb30*02BDigb31*02BDigb32*02BDigb33*02BDffff">IPC-3034(шасси S021)</option>
+                                
+                                <option value="34igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*3001igb9*3001igb10*3001igb11*3001igb12*3001igb13*3001igb14*3001igb15*3001em0*02BDem1*02BDigb16*3001igb17*3001igb18*3001igb19*3001igb20*3001igb21*3001igb22*3001igb23*3001igb24*3001igb25*3001igb26*3001igb27*3001igb28*3001igb29*3001igb30*3001igb31*3001igb32*3001igb33*3001ffff">IPC-3034F(шасси S021)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="uk-margin">
+                        <button class="uk-button uk-button-primary uk-width-1-1" type="button" id="genBtn">СГЕНЕРИРОВАТЬ</button>
+                    </div>
+                </form>
+                
+                <div id="strConf" class="uk-margin-top"></div>
             </div>
         </div>
         
         <hr class="uk-margin-medium" />
         
+        <!-- Скрипт для генерации строки и отображения SVG -->
         <script type="text/javascript">
         // Преобразование десятичного числа в шестнадцатеричное с ведущими нулями
         function decTohex(number) {
@@ -220,87 +296,14 @@
         });
         </script>
         
+        <!-- Блок с описанием (перемещен в конец) -->
         <div class="uk-margin-medium-top uk-margin-medium-bottom">
             <div class="uk-card uk-card-default uk-card-body">
-                <form class="uk-form-stacked" id="genForm" onsubmit="return false">
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="numksh">Номер КШ</label>
-                        <div class="uk-form-controls">
-                            <input class="uk-input" type="number" id="numksh" placeholder="Введите № КШ (не заводской номер)" required />
-                        </div>
-                    </div>
-                    
-                    <div class="uk-margin">
-                        <label class="uk-form-label" for="platform">Аппаратная платформа 
-                            <a href="#tipsPlatform" uk-icon="icon: question" uk-toggle></a>
-                        </label>
-                        <div class="uk-form-controls">
-                            <select class="uk-select platform-select" id="platform" required>
-                                <option selected value="3igb0*02BDigb1*02BDigb2*02BDffff">IPC-10(шасси LN-010A)</option>
-                            
-                                <option value="3re0*02BDre1*02BDre2*02BDffff">IPC-10(шасси S088)</option>
-                                
-                                <option value="2em0*02BDem1*02BDffff">IPC-25(шасси 9830)</option>
-                                
-                                <option value="4em0*02BDem1*02BDem2*02BDem3*02BDffff">IPC-25(шасси 92D9)</option>
-                                
-                                <option value="5igb0*3001igb1*02BDigb2*02BDigb3*02BDigb4*02BDffff">IPC-25(шасси S115)</option>
-                                
-                                <option value="5igb0*3001igb1*02BDigb2*02BDigb3*02BDigb4*02BDffff">IPC-50(шасси LN-010C)</option>
-                    
-                                <option value="5igb0*02BDigb1*02BDigb2*02BDigb3*02BDix0*0001ffff">IPC-R10 и IPC-R50 (шасси SC-R15)</option>
-                                
-                                <option value="8igb0*3001igb1*3001igb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-100(шасси G560)</option>
-                                
-                                <option value="8igb0*3001igb1*3001em0*02BDem1*02BDem2*02BDem3*02BDem4*02BDem5*02BDffff">IPC-100(шасси 92E3)</option>
-                                
-                                <option value="8igb0*3001igb1*3001igb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-100(шасси S102)</option>
-                                
-                                <option value="8igb0*02BDigb1*02BDigb2*02BDigb3*02BDix0*0001ix1*0001ix2*0215ix3*0215ffff">IPC-R300 и R550(шасси SC-R300)</option>
-                                
-                                <option value="6igb0*02BDigb1*02BDigb2*02BDigb3*02BDem0*02BDem1*02BDffff">IPC-400(шасси MS-9297)</option>
-                                
-                                <option value="6igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDffff">IPC-500(шасси LN-015B)</option>
-                                
-                                <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*3001igb5*3001igb6*02BDigb7*02BDigb8*02BDigb9*02BDffff">IPC-500F(шасси LN-015C)</option>
-                                
-                                <option value="8igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-600(шасси DV-030A)</option>
-                                
-                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDigb16*02BDigb17*02BDigb18*02BDigb19*02BDigb20*02BDigb21*02BDigb22*02BDigb23*02BDigb24*02BDigb25*02BDigb26*02BDigb27*02BDigb28*02BDigb29*02BDigb30*02BDigb31*02BDigb32*02BDigb33*02BDffff">IPC-800F(шасси DV-030B)</option>
-                                
-                                <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000(шасси S021)</option>
-                                
-                                <option value="10igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000F(шасси S021)</option>
-                                
-                                <option value="18igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDem0*02BDem1*02BDffff">IPC-1000F2(шасси S021)</option>
-                                
-                                <option value="16igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDffff">IPC-1000F(шасси DV-031B)</option>
-                                
-                                <option value="20ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*3001igb9*3001igb10*3001igb11*3001igb12*3001igb13*3001igb14*3001igb15*3001*02DBffff">IPC-1000NF2(шасси DV-031F)</option>
-    
-                                <option value="12ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-R1000 и R-800(шасси SC-R1000)</option>
-                                
-                                <option value="14ix0*0001ix1*0001igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDix2*0001ix3*0001ffff">IPC-3000F(шасси S021)</option>
-                                
-                                <option value="13igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801igb8*02DBffff">IPC-3000F(шасси LN-021)</option>
-                                
-                                <option value="16igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001ixl0*2E801ixl1*2E801ixl2*2E801ixl3*2E801ixl5*2E801ixl6*2E801ixl7*2E801igb8*02DBffff">IPC-3000FC(шасси LN-021A)</option>
-    
-                                <option value="17igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDix10*2E801ix11*2E801ix12*2E801ix13*2E801ix14*2E801ix15*2E801ix15*2E801ix16*2E801ix17*2E801ix18*02BDffff">IPC-3000NF2(шасси LN021E)</option>
-                                
-                                <option value="34igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDem0*02BDem1*02BDigb16*02BDigb17*02BDigb18*02BDigb19*02BDigb20*02BDigb21*02BDigb22*02BDigb23*02BDigb24*02BDigb25*02BDigb26*02BDigb27*02BDigb28*02BDigb29*02BDigb30*02BDigb31*02BDigb32*02BDigb33*02BDffff">IPC-3034(шасси S021)</option>
-                                
-                                <option value="34igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*3001igb9*3001igb10*3001igb11*3001igb12*3001igb13*3001igb14*3001igb15*3001em0*02BDem1*02BDigb16*3001igb17*3001igb18*3001igb19*3001igb20*3001igb21*3001igb22*3001igb23*3001igb24*3001igb25*3001igb26*3001igb27*3001igb28*3001igb29*3001igb30*3001igb31*3001igb32*3001igb33*3001ffff">IPC-3034F(шасси S021)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="uk-margin">
-                        <button class="uk-button uk-button-primary uk-width-1-1" type="button" id="genBtn">СГЕНЕРИРОВАТЬ</button>
-                    </div>
-                </form>
-                
-                <div id="strConf" class="uk-margin-top"></div>
+                <p class="uk-text-justify">
+                    Простенький генератор строк конфигурации КШ для последующего добавления в ЦУС. К сожалению не для всех аппаратных платформ, ввиду отсутствия у меня паспортов на оборудование где прописаны эти самые строки. Если вы можете мне <a href="mailto:visiostencil@mail.ru">прислать</a> фото строки конфигурации отсутствующего в списке оборудования, буду благодарен.
+                    <br /><br />
+                    Генерируются базовые конфигурации, если у вас вышел из строя интерфейс(ы) смотрите строку которую выдает сам континент при перепрошивке (после ввода номера КШ).
+                </p>
             </div>
         </div>
         
