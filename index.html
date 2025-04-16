@@ -23,6 +23,63 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.26/dist/js/uikit-icons.min.js"></script>
     
     <style>
+        :root {
+            /* CSS-переменные для светлой темы (по умолчанию) */
+            --background-color: #fff;
+            --text-color: #333;
+            --card-background: #fff;
+            --card-border: #e5e5e5;
+            --section-background: #f8f8f8;
+            --link-color: #1e87f0;
+            --button-primary-color: #1e87f0;
+            --button-danger-color: #f0506e;
+            --button-secondary-color: #222;
+            --navbar-background: #f8f8f8;
+            --modal-background: #fff;
+            --dropdown-background: #fff;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* CSS-переменные для темной темы */
+                --background-color: #222;
+                --text-color: #f0f0f0;
+                --card-background: #333;
+                --card-border: #444;
+                --section-background: #2d2d2d;
+                --link-color: #4aa9ff;
+                --button-primary-color: #4aa9ff;
+                --button-danger-color: #ff7a93;
+                --button-secondary-color: #aaa;
+                --navbar-background: #1d1d1d;
+                --modal-background: #333;
+                --dropdown-background: #333;
+            }
+        }
+        
+        body {
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+        
+        .uk-card, .uk-card-default {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border-color: var(--card-border);
+        }
+        
+        .uk-navbar-container {
+            background-color: var(--navbar-background) !important;
+        }
+        
+        .uk-navbar-dropdown {
+            background-color: var(--dropdown-background);
+        }
+        
+        a {
+            color: var(--link-color);
+        }
+        
         /* Мобильные стили */
         @media (max-width: 768px) {
             .uk-navbar-container {
@@ -105,5 +162,38 @@
             <img src="img/wtf.svg" alt="Изображение" uk-svg>
         </div>
     </div>
+
+    <script>
+    // Функция для определения и установки темы
+    function setTheme() {
+        // Проверяем системную тему
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // Добавляем атрибут данных для отслеживания текущей темы
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        
+        // Дополнительные настройки для UI-компонентов
+        if (isDark) {
+            // Любые дополнительные настройки для темной темы
+            document.querySelectorAll('img').forEach(img => {
+                // Уменьшаем яркость изображений в темной теме
+                img.style.filter = 'brightness(0.9)';
+            });
+        } else {
+            // Сбрасываем любые дополнительные настройки при светлой теме
+            document.querySelectorAll('img').forEach(img => {
+                img.style.filter = '';
+            });
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Устанавливаем тему при загрузке
+        setTheme();
+        
+        // Слушаем изменения системной темы
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTheme);
+    });
+    </script>
 </body>
 </html>
