@@ -1,4 +1,4 @@
-# kdemon.github.io 
+# [kdemon.github.io ](https://chelaxian.github.io/kdemon.github.io/)
 (адаптированная версия для мобильных устройств)
 
 Персональный сайт, посвященный стенсилам Visio для сетевого оборудования и калькулятору строк конфигурации для АПКШ Континент. Доступен по адресу: [https://kdemon.github.io](https://kdemon.github.io)
