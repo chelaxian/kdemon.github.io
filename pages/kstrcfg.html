@@ -43,28 +43,26 @@
             --alert-danger-text: #f0506e;
         }
         
-        @media (prefers-color-scheme: dark) {
-            :root {
-                /* CSS-переменные для темной темы */
-                --background-color: #222;
-                --text-color: #f0f0f0;
-                --card-background: #333;
-                --card-border: #444;
-                --section-background: #2d2d2d;
-                --link-color: #4aa9ff;
-                --button-primary-color: #4aa9ff;
-                --button-danger-color: #ff7a93;
-                --button-secondary-color: #aaa;
-                --navbar-background: #1d1d1d;
-                --modal-background: #333;
-                --dropdown-background: #333;
-                --svg-container-background: #2d2d2d;
-                --svg-container-border: #444;
-                --alert-success-background: #2d3b35;
-                --alert-success-text: #4ed8ad;
-                --alert-danger-background: #3a2a2e;
-                --alert-danger-text: #ff7a93;
-            }
+        /* Переменные для темной темы (активируются при наличии класса dark-theme) */
+        .dark-theme {
+            --background-color: #222;
+            --text-color: #f0f0f0;
+            --card-background: #333;
+            --card-border: #444;
+            --section-background: #2d2d2d;
+            --link-color: #4aa9ff;
+            --button-primary-color: #4aa9ff;
+            --button-danger-color: #ff7a93;
+            --button-secondary-color: #aaa;
+            --navbar-background: #1d1d1d;
+            --modal-background: #333;
+            --dropdown-background: #333;
+            --svg-container-background: #2d2d2d;
+            --svg-container-border: #444;
+            --alert-success-background: #2d3b35;
+            --alert-success-text: #4ed8ad;
+            --alert-danger-background: #3a2a2e;
+            --alert-danger-text: #ff7a93;
         }
         
         body {
@@ -114,6 +112,27 @@
             background-color: var(--card-background);
             color: var(--text-color);
             border-color: var(--card-border);
+        }
+        
+        /* Кнопка переключения темы */
+        .theme-toggle {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+        }
+        
+        .theme-toggle img {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .dark-theme .theme-toggle img {
+            filter: invert(1);
         }
         
         /* Мобильные стили */
@@ -229,6 +248,16 @@
                     </li>
                 </ul>
             </div>
+            
+            <div class="uk-navbar-right">
+                <ul class="uk-navbar-nav">
+                    <li>
+                        <a href="#" class="theme-toggle" id="theme-toggle" title="Переключить тему">
+                            <img src="../img/theme.svg" alt="Переключить тему">
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </nav>
         
         <!-- Логотип и форма генератора -->
@@ -324,61 +353,77 @@
         
         <!-- Скрипт для генерации строки и отображения SVG -->
         <script type="text/javascript">
-        // Функция для определения и установки темы
-        function setTheme() {
-            // Проверяем системную тему
-            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // Функция для переключения темы
+        function toggleTheme() {
+            // Переключаем класс на body
+            document.body.classList.toggle('dark-theme');
             
-            // Добавляем атрибут данных для отслеживания текущей темы
-            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            // Сохраняем предпочтение в localStorage
+            const isDarkTheme = document.body.classList.contains('dark-theme');
+            localStorage.setItem('darkTheme', isDarkTheme);
             
-            // Дополнительные настройки для UI-компонентов
-            if (isDark) {
-                // Любые дополнительные настройки для темной темы
-                document.querySelectorAll('img').forEach(img => {
-                    // Уменьшаем яркость изображений в темной теме
+            // Применяем фильтр к изображениям в зависимости от темы
+            const images = document.querySelectorAll('img:not(.theme-toggle img)');
+            if (isDarkTheme) {
+                images.forEach(img => {
                     img.style.filter = 'brightness(0.9)';
                 });
             } else {
-                // Сбрасываем любые дополнительные настройки при светлой теме
-                document.querySelectorAll('img').forEach(img => {
+                images.forEach(img => {
                     img.style.filter = '';
                 });
             }
         }
-        
-        // Преобразование десятичного числа в шестнадцатеричное с ведущими нулями
-        function decTohex(number) {
-            result = number.toString(16).toUpperCase();
-            return ("00000000" + result).slice(-8);
-        }
-
-        // Обработчик успешной загрузки SVG
-        function handleSvgLoad(svgElement, loaderElement, errorMessageElement) {
-            svgElement.style.opacity = "1";
-            loaderElement.style.display = "none";
-            errorMessageElement.style.display = "none";
-        }
-
-        // Обработчик ошибки загрузки SVG
-        function handleSvgError(svgElement, loaderElement, errorMessageElement, platformName) {
-            // Попытка загрузить SVG изображение
-            if (!(svgElement.attributes.src.value === '../img/nodata.svg')) {
-                loaderElement.style.display = "none";
-                errorMessageElement.style.display = "block";
-                errorMessageElement.innerHTML = `Схема портов для платформы "${platformName}" не найдена`;
-                svgElement.src = '../img/nodata.svg';
-                svgElement.style.opacity = "1";
-            }
-        }
 
         document.addEventListener("DOMContentLoaded", function() {
-            // Устанавливаем тему при загрузке
-            setTheme();
+            // Получаем кнопку переключения темы
+            const themeToggle = document.getElementById('theme-toggle');
             
-            // Слушаем изменения системной темы
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTheme);
+            // Проверяем сохраненное предпочтение темы
+            const savedTheme = localStorage.getItem('darkTheme');
+            
+            // Если тема была сохранена как темная, применяем её
+            if (savedTheme === 'true') {
+                document.body.classList.add('dark-theme');
+                
+                // Применяем фильтр к изображениям
+                const images = document.querySelectorAll('img:not(.theme-toggle img)');
+                images.forEach(img => {
+                    img.style.filter = 'brightness(0.9)';
+                });
+            }
+            
+            // Добавляем обработчик клика на кнопку
+            themeToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggleTheme();
+            });
         
+            // Преобразование десятичного числа в шестнадцатеричное с ведущими нулями
+            function decTohex(number) {
+                result = number.toString(16).toUpperCase();
+                return ("00000000" + result).slice(-8);
+            }
+
+            // Обработчик успешной загрузки SVG
+            function handleSvgLoad(svgElement, loaderElement, errorMessageElement) {
+                svgElement.style.opacity = "1";
+                loaderElement.style.display = "none";
+                errorMessageElement.style.display = "none";
+            }
+
+            // Обработчик ошибки загрузки SVG
+            function handleSvgError(svgElement, loaderElement, errorMessageElement, platformName) {
+                // Попытка загрузить SVG изображение
+                if (!(svgElement.attributes.src.value === '../img/nodata.svg')) {
+                    loaderElement.style.display = "none";
+                    errorMessageElement.style.display = "block";
+                    errorMessageElement.innerHTML = `Схема портов для платформы "${platformName}" не найдена`;
+                    svgElement.src = '../img/nodata.svg';
+                    svgElement.style.opacity = "1";
+                }
+            }
+
             // Обработчик нажатия кнопки генерации
             document.getElementById('genBtn').addEventListener('click', function() {
                 var kshID = Number(document.getElementById("numksh").value);
