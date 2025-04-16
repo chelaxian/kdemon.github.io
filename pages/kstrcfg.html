@@ -1,4 +1,4 @@
-<!-- Версия 1.0.1 -->
+<!-- Версия 1.0.3 -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -57,7 +57,7 @@
             }
         }
         
-        /* Оптимизация изображений - версия 1.0.1 */
+        /* Оптимизация изображений */
         img, svg {
             max-width: 100%;
             height: auto;
@@ -67,12 +67,47 @@
             max-width: 100%;
             margin: 0 auto;
             display: block;
+            transition: opacity 0.3s ease;
         }
         
         @media (max-width: 768px) {
             .svg-scheme {
                 max-width: 90%;
             }
+        }
+        
+        /* Стили для прелоадера */
+        .svg-container {
+            position: relative;
+            min-height: 250px;
+            margin-top: 20px;
+        }
+        
+        .loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1e87f0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .svg-error-message {
+            display: none;
+            text-align: center;
+            color: #f0506e;
+            margin-top: 15px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -134,10 +169,21 @@
             return ("00000000" + result).slice(-8);
         }
 
-        function noImgPort(e) {
-          if (!(e.target.attributes.src.value === '../img/nodata.svg')){
-            e.target.src='../img/nodata.svg';
-          }
+        function handleSvgLoad(svgElement, loaderElement, errorMessageElement) {
+            svgElement.style.opacity = "1";
+            loaderElement.style.display = "none";
+            errorMessageElement.style.display = "none";
+        }
+
+        function handleSvgError(svgElement, loaderElement, errorMessageElement, platformName) {
+            // Попытка загрузить SVG изображение
+            if (!(svgElement.attributes.src.value === '../img/nodata.svg')) {
+                loaderElement.style.display = "none";
+                errorMessageElement.style.display = "block";
+                errorMessageElement.innerHTML = `Схема портов для платформы "${platformName}" не найдена`;
+                svgElement.src = '../img/nodata.svg';
+                svgElement.style.opacity = "1";
+            }
         }
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -150,7 +196,35 @@
                     var platforma = document.getElementById("platform").value;
                     var strConf = decTohex(kshID) + platforma;
                     var optionText = document.getElementById("platform").options[document.getElementById("platform").selectedIndex].text;
-                    document.getElementById("strConf").innerHTML = "<div class='uk-alert uk-alert-success uk-text-break'><b>Строка конфигурации для КШ №: " + kshID + "</b><br />" + strConf + "</div> <div class='uk-text-center'><img src='../img/" + optionText + ".svg' alt='Схема портов' class='svg-scheme' loading='lazy' onError=noImgPort(event);></div>";
+                    var encodedFileName = encodeURIComponent(optionText) + ".svg";
+                    
+                    // Создаем HTML с прелоадером и контейнером для SVG
+                    document.getElementById("strConf").innerHTML = 
+                        "<div class='uk-alert uk-alert-success uk-text-break'>" +
+                        "<b>Строка конфигурации для КШ №: " + kshID + "</b><br />" + 
+                        strConf + 
+                        "</div>" +
+                        "<div class='svg-container'>" +
+                        "<div class='loader' id='svgLoader'></div>" +
+                        "<div class='svg-error-message' id='svgErrorMessage'></div>" +
+                        "<img src='../img/" + encodedFileName + "' alt='Схема портов' class='svg-scheme' id='svgScheme' style='opacity: 0;' loading='lazy'>" +
+                        "</div>";
+                    
+                    var svgElement = document.getElementById('svgScheme');
+                    var loaderElement = document.getElementById('svgLoader');
+                    var errorMessageElement = document.getElementById('svgErrorMessage');
+                    
+                    // Показываем прелоадер
+                    loaderElement.style.display = "block";
+                    
+                    // Назначаем обработчики событий для изображения
+                    svgElement.onload = function() {
+                        handleSvgLoad(svgElement, loaderElement, errorMessageElement);
+                    };
+                    
+                    svgElement.onerror = function() {
+                        handleSvgError(svgElement, loaderElement, errorMessageElement, optionText);
+                    };
                 }
             });
             
@@ -193,7 +267,7 @@
                                 <option value="6igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDffff">IPC-500(шасси LN-015B)</option>
                                 <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*3001igb5*3001igb6*02BDigb7*02BDigb8*02BDigb9*02BDffff">IPC-500F(шасси LN-015C)</option>
                                 <option value="8igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-600(шасси DV-030A)</option>
-                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDffff">IPC-800F(шасси DV-030B)</option>
+                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDigb16*02BDigb17*02BDigb18*02BDigb19*02BDigb20*02BDigb21*02BDigb22*02BDigb23*02BDigb24*02BDigb25*02BDigb26*02BDigb27*02BDigb28*02BDigb29*02BDigb30*02BDigb31*02BDigb32*02BDigb33*02BDffff">IPC-800F(шасси DV-030B)</option>
                                 <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000(шасси S021)</option>
                                 <option value="10igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000F(шасси S021)</option>
                                 <option value="18igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDem0*02BDem1*02BDffff">IPC-1000F2(шасси S021)</option>
