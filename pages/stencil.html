@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css">
     
     <style>
-        /* Мобильные стили */
+        /* Медиа-запросы для мобильных устройств */
         @media (max-width: 768px) {
             .uk-navbar-container {
                 padding: 10px;
@@ -78,6 +78,28 @@
             height: auto;
         }
         
+        /* Ускоренная загрузка изображений - версия 1.1.0 */
+        .company-logo {
+            display: block;
+            margin: 0 auto 15px;
+            max-width: 300px;
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+        
+        /* Быстрая анимация для превью - версия 1.1.0 */
+        .preview-image {
+            transition: transform 0.2s ease-in-out;
+            will-change: transform;
+            transform: translateZ(0);
+        }
+        
+        .preview-image:hover {
+            transform: scale(1.05);
+        }
+        
         .svg-scheme {
             max-width: 100%;
             margin: 0 auto;
@@ -93,6 +115,16 @@
 </head>
 <body>
     <div class="uk-container uk-margin-top">
+        <!-- Скрытый div для предзагрузки логотипов -->
+        <div style="display:none;" id="preload-logos">
+            <img src="../img/securitycodelogo.jpg" alt="Logo Security Code">
+            <img src="../img/s-terralogo.png" alt="Logo S-Terra">
+            <img src="../img/infotecslogo.png" alt="Logo InfoTecs">
+            <img src="../img/checkpointlogo.png" alt="Logo CheckPoint">
+            <img src="../img/usergatelogo.png" alt="Logo UserGate">
+            <img src="../img/cryptoprologo.png" alt="Logo CryptoPro">
+        </div>
+        
         <nav class="uk-navbar-container" uk-navbar>
             <div class="uk-navbar-left">
                 <ul class="uk-navbar-nav">
@@ -364,11 +396,11 @@
                 <li>
                     <div class="uk-card uk-card-default uk-card-body">
                         <div class="stencil-preview-container">
-                            <a href="../img/preview/InfoTecs_01.png" data-lightbox="infotecs" data-title="ViPNet 3D">
-                                <img class="preview-image uk-margin-small" src="../img/preview/InfoTecs_01_thumb.png" alt="ViPNet 3D" loading="lazy">
+                            <a href="../img/preview/ViPNet_3D.png" data-lightbox="infotecs" data-title="ViPNet 3D">
+                                <img class="preview-image uk-margin-small" src="../img/preview/ViPNet_3D_thumb.png" alt="ViPNet 3D" loading="lazy">
                             </a>
-                            <a href="../img/preview/InfoTecs_02.png" data-lightbox="infotecs" data-title="ViPNet Front">
-                                <img class="preview-image uk-margin-small" src="../img/preview/InfoTecs_02_thumb.png" alt="ViPNet Front" loading="lazy">
+                            <a href="../img/preview/ViPNet_front.png" data-lightbox="infotecs" data-title="ViPNet Front">
+                                <img class="preview-image uk-margin-small" src="../img/preview/ViPNet_front_thumb.png" alt="ViPNet Front" loading="lazy">
                             </a>
                         </div>
                     </div>
@@ -550,10 +582,30 @@
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Настройка лайтбокса
         lightbox.option({
             'resizeDuration': 200,
             'wrapAround': true,
             'albumLabel': "Изображение %1 из %2"
+        });
+        
+        // Предзагрузка важных изображений
+        const imagesToPreload = [
+            '../img/securitycodelogo.jpg',
+            '../img/s-terralogo.png',
+            '../img/infotecslogo.png',
+            '../img/checkpointlogo.png',
+            '../img/usergatelogo.png',
+            '../img/cryptoprologo.png',
+            '../img/preview/ViPNet_3D_thumb.png',
+            '../img/preview/ViPNet_front_thumb.png',
+            '../img/preview/ViPNet_3D.png',
+            '../img/preview/ViPNet_front.png'
+        ];
+        
+        imagesToPreload.forEach(src => {
+            const img = new Image();
+            img.src = src;
         });
     });
     </script>
