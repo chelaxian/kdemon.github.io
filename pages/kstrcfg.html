@@ -1,4 +1,4 @@
-<!-- Версия 1.0.0 -->
+<!-- Версия 1.0.1 -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -54,6 +54,24 @@
             }
             .platform-select {
                 width: 100%;
+            }
+        }
+        
+        /* Оптимизация изображений - версия 1.0.1 */
+        img, svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .svg-scheme {
+            max-width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .svg-scheme {
+                max-width: 90%;
             }
         }
     </style>
@@ -132,7 +150,7 @@
                     var platforma = document.getElementById("platform").value;
                     var strConf = decTohex(kshID) + platforma;
                     var optionText = document.getElementById("platform").options[document.getElementById("platform").selectedIndex].text;
-                    document.getElementById("strConf").innerHTML = "<div class='uk-alert uk-alert-success uk-text-break'><b>Строка конфигурации для КШ №: " + kshID + "</b><br />" + strConf + "</div> <div class='uk-text-center'><img src='../img/" + optionText + ".svg' alt='Схема портов' onError=noImgPort(event);></div>";
+                    document.getElementById("strConf").innerHTML = "<div class='uk-alert uk-alert-success uk-text-break'><b>Строка конфигурации для КШ №: " + kshID + "</b><br />" + strConf + "</div> <div class='uk-text-center'><img src='../img/" + optionText + ".svg' alt='Схема портов' class='svg-scheme' loading='lazy' onError=noImgPort(event);></div>";
                 }
             });
             
