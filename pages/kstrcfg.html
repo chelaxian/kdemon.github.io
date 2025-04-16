@@ -92,9 +92,33 @@
         <nav class="uk-navbar-container uk-margin-top" uk-navbar>
             <div class="uk-navbar-left">
                 <ul class="uk-navbar-nav">
-                    <li class="uk-active"><a href="/"><span uk-icon="home"></span></a></li>
-                    <li><a href="stencil.html">Визио-шаблоны</a></li>
-                    <li><a href="#">Генератор строк конфигурации</a></li>
+                    <li><a href="../index.html" uk-icon="icon: home"></a></li>
+                    <li>
+                        <a href="stencil.html">
+                            <span uk-icon="icon: pencil"></span>
+                            <span class="uk-visible@s">Stencil</span>
+                        </a>
+                        <div class="uk-navbar-dropdown uk-navbar-dropdown-width-2">
+                            <div class="uk-navbar-dropdown-grid uk-child-width-1-1" uk-grid>
+                                <div>
+                                    <ul class="uk-nav uk-navbar-dropdown-nav">
+                                        <li><a href="stencil.html#SecurityCode">Код Безопасности</a></li>
+                                        <li><a href="stencil.html#S-Terra">S-Terra</a></li>
+                                        <li><a href="stencil.html#InfoTecs">InfoTecs</a></li>
+                                        <li><a href="stencil.html#CheckPoint">CheckPoint</a></li>
+                                        <li><a href="stencil.html#UserGate">UserGate</a></li>
+                                        <li><a href="stencil.html#CryptoPro">КриптоПро</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="uk-active">
+                        <a href="kstrcfg.html">
+                            <span uk-icon="icon: calculator"></span>
+                            <span class="uk-visible@s">kStrCfg</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -117,75 +141,144 @@
         
         <script type="text/javascript">
         // Преобразование десятичного числа в шестнадцатеричное с ведущими нулями
-        function decTohex(number) {
-            result = number.toString(16).toUpperCase();
-            return ("00000000" + result).slice(-8);
+        function decTohex(num) {
+            return Number(num).toString(16).padStart(4, '0');
+        }
+
+        // Функция для предзагрузки SVG изображений
+        function preloadImages(platforms) {
+            const preloads = {};
+            platforms.forEach(platform => {
+                if (platform.includes('IPC')) {
+                    const imgName = platform.trim();
+                    const img = new Image();
+                    img.src = `../img/${imgName}.svg`;
+                    preloads[imgName] = img;
+                }
+            });
+            return preloads;
         }
 
         // Обработчик успешной загрузки SVG
-        function handleSvgLoad(svgElement, loaderElement, errorMessageElement) {
-            svgElement.style.opacity = "1";
-            loaderElement.style.display = "none";
-            errorMessageElement.style.display = "none";
+        function handleSvgLoad(svgContainer, platformName) {
+            svgContainer.classList.remove('uk-hidden');
+            
+            // Убираем прелоадер, если есть
+            const preloader = document.getElementById('svg-preloader');
+            if (preloader) {
+                preloader.classList.add('uk-hidden');
+            }
+            
+            // Добавляем заголовок
+            const title = document.createElement('h3');
+            title.textContent = `Схема портов для ${platformName}`;
+            title.className = 'uk-text-center';
+            svgContainer.parentNode.insertBefore(title, svgContainer);
         }
 
         // Обработчик ошибки загрузки SVG
-        function handleSvgError(svgElement, loaderElement, errorMessageElement, platformName) {
-            // Попытка загрузить SVG изображение
-            if (!(svgElement.attributes.src.value === '../img/nodata.svg')) {
-                loaderElement.style.display = "none";
-                errorMessageElement.style.display = "block";
-                errorMessageElement.innerHTML = `Схема портов для платформы "${platformName}" не найдена`;
-                svgElement.src = '../img/nodata.svg';
-                svgElement.style.opacity = "1";
+        function handleSvgError(svgContainer, platformName) {
+            // Убираем прелоадер, если есть
+            const preloader = document.getElementById('svg-preloader');
+            if (preloader) {
+                preloader.classList.add('uk-hidden');
             }
+            
+            // Показываем сообщение об ошибке
+            svgContainer.innerHTML = `<div class="uk-alert uk-alert-warning">
+                <p>Схема для платформы "${platformName}" недоступна.</p>
+                <p>Используйте изображение-заглушку <a href="../img/nodata.svg" target="_blank">nodata.svg</a>.</p>
+            </div>`;
+            svgContainer.classList.remove('uk-hidden');
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // Обработчик нажатия кнопки генерации
-            document.getElementById('genBtn').addEventListener('click', function() {
-                var kshID = Number(document.getElementById("numksh").value);
-                kshID = Math.floor(kshID);
+        // Глобальная переменная для хранения предзагруженных изображений
+        let preloadedImages = {};
+
+        // Инициализация после загрузки страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Собираем все платформы из селекта
+            const platformSelect = document.getElementById('platform');
+            const platforms = Array.from(platformSelect.options).map(opt => opt.text);
+            
+            // Предзагружаем изображения
+            preloadedImages = preloadImages(platforms);
+            
+            // Добавляем контейнер для SVG
+            const resultContainer = document.getElementById('result-container');
+            const svgContainer = document.createElement('div');
+            svgContainer.id = 'svg-diagram';
+            svgContainer.className = 'uk-width-1-1 uk-margin-medium-top uk-hidden';
+            resultContainer.appendChild(svgContainer);
+            
+            // Добавляем прелоадер
+            const preloader = document.createElement('div');
+            preloader.id = 'svg-preloader';
+            preloader.className = 'uk-width-1-1 uk-text-center uk-margin-medium-top uk-hidden';
+            preloader.innerHTML = '<div uk-spinner="ratio: 2"></div><p>Загрузка схемы...</p>';
+            resultContainer.appendChild(preloader);
+        });
+
+        // Модифицируем обработчик события генерации строки
+        document.getElementById('generate').addEventListener('click', function(e) {
+            e.preventDefault();
+            const ksh = document.getElementById('ksh').value.trim();
+            
+            if (ksh === "") {
+                UIkit.notification({
+                    message: 'Введите номер КШ!',
+                    status: 'warning',
+                    pos: 'top-center',
+                    timeout: 5000
+                });
+                return;
+            }
+            
+            const platformSelect = document.getElementById('platform');
+            const platform = platformSelect.options[platformSelect.selectedIndex].text;
+            const platformValue = platformSelect.value;
+            
+            // Показываем прелоадер
+            const preloader = document.getElementById('svg-preloader');
+            if (preloader) {
+                preloader.classList.remove('uk-hidden');
+            }
+            
+            // Очищаем предыдущую схему
+            const svgContainer = document.getElementById('svg-diagram');
+            svgContainer.innerHTML = '';
+            svgContainer.classList.add('uk-hidden');
+            
+            // Удаляем предыдущий заголовок, если есть
+            const prevTitle = document.querySelector('#result-container h3');
+            if (prevTitle) {
+                prevTitle.remove();
+            }
+            
+            // Генерируем строку конфигурации
+            let configStr = "";
+            
+            if (platform.includes('IPC')) {
+                // Для IPC-платформ загружаем SVG
+                const imgName = platform.trim();
                 
-                // Проверка валидности номера КШ
-                if (kshID <= 0 || kshID > 4294967295) {
-                    document.getElementById("strConf").innerHTML = "<div class='uk-alert uk-alert-danger uk-text-break'>Неверное значение. <br /><br />Инженер Континента должен страдать! <span uk-icon='icon: copyright'></span> Dmitry Nesterkin _aka_ Undelborg</div>";
-                    return;
+                if (preloadedImages[imgName] && preloadedImages[imgName].complete) {
+                    // Если изображение предзагружено и успешно загружено
+                    svgContainer.innerHTML = `<img src="../img/${imgName}.svg" alt="Схема ${imgName}" class="uk-width-1-1">`;
+                    handleSvgLoad(svgContainer, platform);
+                } else {
+                    // Если изображение не предзагружено или не загружено
+                    const img = new Image();
+                    img.onload = function() {
+                        svgContainer.innerHTML = `<img src="../img/${imgName}.svg" alt="Схема ${imgName}" class="uk-width-1-1">`;
+                        handleSvgLoad(svgContainer, platform);
+                    };
+                    img.onerror = function() {
+                        handleSvgError(svgContainer, platform);
+                    };
+                    img.src = `../img/${imgName}.svg`;
                 }
-                
-                var platforma = document.getElementById("platform").value;
-                var strConf = decTohex(kshID) + platforma;
-                var optionText = document.getElementById("platform").options[document.getElementById("platform").selectedIndex].text;
-                var encodedFileName = encodeURIComponent(optionText) + ".svg";
-                
-                // Создаем HTML с прелоадером и контейнером для SVG
-                document.getElementById("strConf").innerHTML = 
-                    "<div class='uk-alert uk-alert-success uk-text-break'>" +
-                    "<b>Строка конфигурации для КШ №: " + kshID + "</b><br />" + 
-                    strConf + 
-                    "</div>" +
-                    "<div class='svg-container'>" +
-                    "<div class='loader' id='svgLoader'></div>" +
-                    "<div class='svg-error-message' id='svgErrorMessage'></div>" +
-                    "<img src='../img/" + encodedFileName + "' alt='Схема портов' class='svg-scheme' id='svgScheme' style='opacity: 0;' loading='lazy'>" +
-                    "</div>";
-                
-                var svgElement = document.getElementById('svgScheme');
-                var loaderElement = document.getElementById('svgLoader');
-                var errorMessageElement = document.getElementById('svgErrorMessage');
-                
-                // Показываем прелоадер
-                loaderElement.style.display = "block";
-                
-                // Назначаем обработчики событий для изображения
-                svgElement.onload = function() {
-                    handleSvgLoad(svgElement, loaderElement, errorMessageElement);
-                };
-                
-                svgElement.onerror = function() {
-                    handleSvgError(svgElement, loaderElement, errorMessageElement, optionText);
-                };
-            });
+            }
             
             // Обработчик нажатия Enter в поле ввода номера КШ
             document.getElementById('numksh').addEventListener('keypress', function(e) {
@@ -226,7 +319,7 @@
                                 <option value="6igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDffff">IPC-500(шасси LN-015B)</option>
                                 <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*3001igb5*3001igb6*02BDigb7*02BDigb8*02BDigb9*02BDffff">IPC-500F(шасси LN-015C)</option>
                                 <option value="8igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-600(шасси DV-030A)</option>
-                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDffff">IPC-800F(шасси DV-030B)</option>
+                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDigb16*02BDigb17*02BDigb18*02BDigb19*02BDigb20*02BDigb21*02BDigb22*02BDigb23*02BDigb24*02BDigb25*02BDigb26*02BDigb27*02BDigb28*02BDigb29*02BDigb30*02BDigb31*02BDigb32*02BDigb33*02BDffff">IPC-800F(шасси DV-030B)</option>
                                 <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000(шасси S021)</option>
                                 <option value="10igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000F(шасси S021)</option>
                                 <option value="18igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDem0*02BDem1*02BDffff">IPC-1000F2(шасси S021)</option>
