@@ -1,13 +1,13 @@
-<!-- Версия 1.0.3 -->
+<!-- Версия 1.1.0 - Улучшена обработка SVG-изображений IPC -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Генератор строки конфигурации для АПКШ Континент">
-    <meta name="keywords" content="генератор, калькулятор, строка конфигурации, Континент, Код Безопасности, КШ">
-    <meta name="robots" content="index,follow">
+    <meta name="description" content="Генератор строк конфигурации для КШ Континент. Поддержка различных IPC платформ с визуализацией схем.">
+    <meta name="keywords" content="континент, АПКШ, строка конфигурации, IPC, генератор, КШ">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="kdemon">
     <meta name="yandex-verification" content="16edc92c7cc94086" />
     <meta name="google-site-verification" content="_RvXbLRcTqjxyWU5BKMcfvpLvwhw13swKgr8OUr-2VQ" />
     
@@ -21,128 +21,80 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.26/dist/js/uikit-icons.min.js"></script>
     
     <style>
-        /* Мобильные стили */
-        @media (max-width: 768px) {
-            .uk-navbar-container {
-                padding: 10px;
-            }
-            .uk-navbar-nav > li > a {
-                font-size: 16px;
-                padding: 0 10px;
-                min-height: 40px;
-            }
-            select, input {
-                font-size: 16px !important;
-                padding: 10px !important;
-                margin-bottom: 15px !important;
-            }
-            button {
-                width: 100%;
-                padding: 15px !important;
-                margin-top: 10px !important;
-                margin-bottom: 20px !important;
-                font-size: 18px !important;
-            }
-            .uk-alert {
-                font-size: 16px;
-                padding: 15px;
-                word-break: break-word;
-            }
-            img {
-                max-width: 100%;
-                height: auto;
-            }
-            .platform-select {
-                width: 100%;
-            }
+        .platform-select {
+            font-family: monospace;
         }
         
-        /* Оптимизация изображений */
-        img, svg {
-            max-width: 100%;
-            height: auto;
+        /* Стили для контейнера SVG-схемы */
+        .svg-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            min-height: 300px;
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+            padding: 10px;
         }
         
+        /* Стили для SVG-схемы */
         .svg-scheme {
             max-width: 100%;
-            margin: 0 auto;
-            display: block;
+            height: auto;
             transition: opacity 0.3s ease;
         }
         
-        @media (max-width: 768px) {
-            .svg-scheme {
-                max-width: 90%;
-            }
-        }
-        
-        /* Стили для прелоадера */
-        .svg-container {
-            position: relative;
-            min-height: 250px;
-            margin-top: 20px;
-        }
-        
+        /* Анимация загрузки */
         .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1e87f0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: calc(50% - 25px);
+            left: calc(50% - 25px);
+            z-index: 2;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Сообщение об ошибке */
+        .svg-error-message {
             display: none;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 48px;
-            height: 48px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #1e87f0;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        .svg-error-message {
-            display: none;
             text-align: center;
             color: #f0506e;
-            margin-top: 15px;
-            font-size: 16px;
+            padding: 10px;
+            z-index: 1;
+            width: 80%;
+        }
+        
+        /* Медиа-запросы для мобильных устройств */
+        @media (max-width: 640px) {
+            .svg-container {
+                min-height: 200px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="uk-container uk-margin-top">
-        <nav class="uk-navbar-container" uk-navbar>
+    <div class="uk-container uk-container-small">
+        <nav class="uk-navbar-container uk-margin-top" uk-navbar>
             <div class="uk-navbar-left">
                 <ul class="uk-navbar-nav">
-                    <li><a href="../index.html" uk-icon="icon: home"></a></li>
-                    <li>
-                        <a href="stencil.html">
-                            <span uk-icon="icon: pencil"></span>
-                            <span class="uk-visible@s">Stencil</span>
-                        </a>
-                        <div class="uk-navbar-dropdown uk-navbar-dropdown-width-2">
-                            <div class="uk-navbar-dropdown-grid uk-child-width-1-1" uk-grid>
-                                <div>
-                                    <ul class="uk-nav uk-navbar-dropdown-nav">
-                                        <li><a href="stencil.html#SecurityCode">Код Безопасности</a></li>
-                                        <li><a href="stencil.html#S-Terra">S-Terra</a></li>
-                                        <li><a href="stencil.html#InfoTecs">InfoTecs</a></li>
-                                        <li><a href="stencil.html#CheckPoint">CheckPoint</a></li>
-                                        <li><a href="stencil.html#UserGate">UserGate</a></li>
-                                        <li><a href="stencil.html#CryptoPro">КриптоПро</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="uk-active">
-                        <a href="kstrcfg.html">
-                            <span uk-icon="icon: calculator"></span>
-                            <span class="uk-visible@s">kStrCfg</span>
-                        </a>
-                    </li>
+                    <li class="uk-active"><a href="/"><span uk-icon="home"></span></a></li>
+                    <li><a href="stencil.html">Визио-шаблоны</a></li>
+                    <li><a href="#">Генератор строк конфигурации</a></li>
                 </ul>
             </div>
         </nav>
@@ -164,17 +116,20 @@
         <hr class="uk-margin-medium" />
         
         <script type="text/javascript">
+        // Преобразование десятичного числа в шестнадцатеричное с ведущими нулями
         function decTohex(number) {
             result = number.toString(16).toUpperCase();
             return ("00000000" + result).slice(-8);
         }
 
+        // Обработчик успешной загрузки SVG
         function handleSvgLoad(svgElement, loaderElement, errorMessageElement) {
             svgElement.style.opacity = "1";
             loaderElement.style.display = "none";
             errorMessageElement.style.display = "none";
         }
 
+        // Обработчик ошибки загрузки SVG
         function handleSvgError(svgElement, loaderElement, errorMessageElement, platformName) {
             // Попытка загрузить SVG изображение
             if (!(svgElement.attributes.src.value === '../img/nodata.svg')) {
@@ -187,47 +142,52 @@
         }
 
         document.addEventListener("DOMContentLoaded", function() {
+            // Обработчик нажатия кнопки генерации
             document.getElementById('genBtn').addEventListener('click', function() {
                 var kshID = Number(document.getElementById("numksh").value);
                 kshID = Math.floor(kshID);
+                
+                // Проверка валидности номера КШ
                 if (kshID <= 0 || kshID > 4294967295) {
                     document.getElementById("strConf").innerHTML = "<div class='uk-alert uk-alert-danger uk-text-break'>Неверное значение. <br /><br />Инженер Континента должен страдать! <span uk-icon='icon: copyright'></span> Dmitry Nesterkin _aka_ Undelborg</div>";
-                } else {
-                    var platforma = document.getElementById("platform").value;
-                    var strConf = decTohex(kshID) + platforma;
-                    var optionText = document.getElementById("platform").options[document.getElementById("platform").selectedIndex].text;
-                    var encodedFileName = encodeURIComponent(optionText) + ".svg";
-                    
-                    // Создаем HTML с прелоадером и контейнером для SVG
-                    document.getElementById("strConf").innerHTML = 
-                        "<div class='uk-alert uk-alert-success uk-text-break'>" +
-                        "<b>Строка конфигурации для КШ №: " + kshID + "</b><br />" + 
-                        strConf + 
-                        "</div>" +
-                        "<div class='svg-container'>" +
-                        "<div class='loader' id='svgLoader'></div>" +
-                        "<div class='svg-error-message' id='svgErrorMessage'></div>" +
-                        "<img src='../img/" + encodedFileName + "' alt='Схема портов' class='svg-scheme' id='svgScheme' style='opacity: 0;' loading='lazy'>" +
-                        "</div>";
-                    
-                    var svgElement = document.getElementById('svgScheme');
-                    var loaderElement = document.getElementById('svgLoader');
-                    var errorMessageElement = document.getElementById('svgErrorMessage');
-                    
-                    // Показываем прелоадер
-                    loaderElement.style.display = "block";
-                    
-                    // Назначаем обработчики событий для изображения
-                    svgElement.onload = function() {
-                        handleSvgLoad(svgElement, loaderElement, errorMessageElement);
-                    };
-                    
-                    svgElement.onerror = function() {
-                        handleSvgError(svgElement, loaderElement, errorMessageElement, optionText);
-                    };
+                    return;
                 }
+                
+                var platforma = document.getElementById("platform").value;
+                var strConf = decTohex(kshID) + platforma;
+                var optionText = document.getElementById("platform").options[document.getElementById("platform").selectedIndex].text;
+                var encodedFileName = encodeURIComponent(optionText) + ".svg";
+                
+                // Создаем HTML с прелоадером и контейнером для SVG
+                document.getElementById("strConf").innerHTML = 
+                    "<div class='uk-alert uk-alert-success uk-text-break'>" +
+                    "<b>Строка конфигурации для КШ №: " + kshID + "</b><br />" + 
+                    strConf + 
+                    "</div>" +
+                    "<div class='svg-container'>" +
+                    "<div class='loader' id='svgLoader'></div>" +
+                    "<div class='svg-error-message' id='svgErrorMessage'></div>" +
+                    "<img src='../img/" + encodedFileName + "' alt='Схема портов' class='svg-scheme' id='svgScheme' style='opacity: 0;' loading='lazy'>" +
+                    "</div>";
+                
+                var svgElement = document.getElementById('svgScheme');
+                var loaderElement = document.getElementById('svgLoader');
+                var errorMessageElement = document.getElementById('svgErrorMessage');
+                
+                // Показываем прелоадер
+                loaderElement.style.display = "block";
+                
+                // Назначаем обработчики событий для изображения
+                svgElement.onload = function() {
+                    handleSvgLoad(svgElement, loaderElement, errorMessageElement);
+                };
+                
+                svgElement.onerror = function() {
+                    handleSvgError(svgElement, loaderElement, errorMessageElement, optionText);
+                };
             });
             
+            // Обработчик нажатия Enter в поле ввода номера КШ
             document.getElementById('numksh').addEventListener('keypress', function(e) {
                 if(e.which == 13) {
                     document.getElementById('genBtn').click();
@@ -257,7 +217,6 @@
                                 <option value="2em0*02BDem1*02BDffff">IPC-25(шасси 9830)</option>
                                 <option value="4em0*02BDem1*02BDem2*02BDem3*02BDffff">IPC-25(шасси 92D9)</option>
                                 <option value="5igb0*3001igb1*02BDigb2*02BDigb3*02BDigb4*02BDffff">IPC-25(шасси S115)</option>
-                                <option value="5igb0*3001igb1*02BDigb2*02BDigb3*02BDigb4*02BDffff">IPC-50(шасси LN-010C)</option>
                                 <option value="5igb0*02BDigb1*02BDigb2*02BDigb3*02BDix0*0001ffff">IPC-R10 и IPC-R50 (шасси SC-R15)</option>
                                 <option value="8igb0*3001igb1*3001igb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-100(шасси G560)</option>
                                 <option value="8igb0*3001igb1*3001em0*02BDem1*02BDem2*02BDem3*02BDem4*02BDem5*02BDffff">IPC-100(шасси 92E3)</option>
@@ -267,7 +226,7 @@
                                 <option value="6igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDffff">IPC-500(шасси LN-015B)</option>
                                 <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*3001igb5*3001igb6*02BDigb7*02BDigb8*02BDigb9*02BDffff">IPC-500F(шасси LN-015C)</option>
                                 <option value="8igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDffff">IPC-600(шасси DV-030A)</option>
-                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDigb16*02BDigb17*02BDigb18*02BDigb19*02BDigb20*02BDigb21*02BDigb22*02BDigb23*02BDigb24*02BDigb25*02BDigb26*02BDigb27*02BDigb28*02BDigb29*02BDigb30*02BDigb31*02BDigb32*02BDigb33*02BDffff">IPC-800F(шасси DV-030B)</option>
+                                <option value="12igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDigb8*02BDigb9*02BDigb10*02BDffff">IPC-800F(шасси DV-030B)</option>
                                 <option value="10igb0*02BDigb1*02BDigb2*02BDigb3*02BDigb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000(шасси S021)</option>
                                 <option value="10igb0*3001igb1*3001igb2*3001igb3*3001igb4*02BDigb5*02BDigb6*02BDigb7*02BDem0*02BDem1*02BDffff">IPC-1000F(шасси S021)</option>
                                 <option value="18igb0*3001igb1*3001igb2*3001igb3*3001igb4*3001igb5*3001igb6*3001igb7*3001igb8*02BDigb9*02BDigb10*02BDigb11*02BDigb12*02BDigb13*02BDigb14*02BDigb15*02BDem0*02BDem1*02BDffff">IPC-1000F2(шасси S021)</option>
