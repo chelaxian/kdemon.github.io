@@ -21,8 +21,99 @@
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.26/dist/js/uikit-icons.min.js"></script>
     
     <style>
+        :root {
+            /* CSS-переменные для светлой темы (по умолчанию) */
+            --background-color: #fff;
+            --text-color: #333;
+            --card-background: #fff;
+            --card-border: #e5e5e5;
+            --section-background: #f8f8f8;
+            --link-color: #1e87f0;
+            --button-primary-color: #1e87f0;
+            --button-danger-color: #f0506e;
+            --button-secondary-color: #222;
+            --navbar-background: #f8f8f8;
+            --modal-background: #fff;
+            --dropdown-background: #fff;
+            --svg-container-background: #f8f8f8;
+            --svg-container-border: #e5e5e5;
+            --alert-success-background: #edfbf6;
+            --alert-success-text: #32d296;
+            --alert-danger-background: #fef4f6;
+            --alert-danger-text: #f0506e;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* CSS-переменные для темной темы */
+                --background-color: #222;
+                --text-color: #f0f0f0;
+                --card-background: #333;
+                --card-border: #444;
+                --section-background: #2d2d2d;
+                --link-color: #4aa9ff;
+                --button-primary-color: #4aa9ff;
+                --button-danger-color: #ff7a93;
+                --button-secondary-color: #aaa;
+                --navbar-background: #1d1d1d;
+                --modal-background: #333;
+                --dropdown-background: #333;
+                --svg-container-background: #2d2d2d;
+                --svg-container-border: #444;
+                --alert-success-background: #2d3b35;
+                --alert-success-text: #4ed8ad;
+                --alert-danger-background: #3a2a2e;
+                --alert-danger-text: #ff7a93;
+            }
+        }
+        
+        body {
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+        
+        .uk-card, .uk-card-default {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border-color: var(--card-border);
+        }
+        
+        .uk-navbar-container {
+            background-color: var(--navbar-background) !important;
+        }
+        
+        .uk-navbar-dropdown {
+            background-color: var(--dropdown-background);
+        }
+        
+        a {
+            color: var(--link-color);
+        }
+        
+        .uk-button-primary {
+            background-color: var(--button-primary-color);
+        }
+        
+        .uk-modal-dialog {
+            background-color: var(--modal-background);
+            color: var(--text-color);
+        }
+        
+        .uk-alert-success {
+            background-color: var(--alert-success-background);
+            color: var(--alert-success-text);
+        }
+        
+        .uk-alert-danger {
+            background-color: var(--alert-danger-background);
+            color: var(--alert-danger-text);
+        }
+        
         .platform-select {
             font-family: monospace;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border-color: var(--card-border);
         }
         
         /* Мобильные стили */
@@ -50,9 +141,9 @@
             align-items: center;
             margin-top: 20px;
             min-height: 300px;
-            border: 1px solid #e5e5e5;
+            border: 1px solid var(--svg-container-border);
             border-radius: 5px;
-            background-color: #f8f8f8;
+            background-color: var(--svg-container-background);
             padding: 10px;
         }
         
@@ -233,6 +324,29 @@
         
         <!-- Скрипт для генерации строки и отображения SVG -->
         <script type="text/javascript">
+        // Функция для определения и установки темы
+        function setTheme() {
+            // Проверяем системную тему
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Добавляем атрибут данных для отслеживания текущей темы
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            
+            // Дополнительные настройки для UI-компонентов
+            if (isDark) {
+                // Любые дополнительные настройки для темной темы
+                document.querySelectorAll('img').forEach(img => {
+                    // Уменьшаем яркость изображений в темной теме
+                    img.style.filter = 'brightness(0.9)';
+                });
+            } else {
+                // Сбрасываем любые дополнительные настройки при светлой теме
+                document.querySelectorAll('img').forEach(img => {
+                    img.style.filter = '';
+                });
+            }
+        }
+        
         // Преобразование десятичного числа в шестнадцатеричное с ведущими нулями
         function decTohex(number) {
             result = number.toString(16).toUpperCase();
@@ -259,6 +373,12 @@
         }
 
         document.addEventListener("DOMContentLoaded", function() {
+            // Устанавливаем тему при загрузке
+            setTheme();
+            
+            // Слушаем изменения системной темы
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTheme);
+        
             // Обработчик нажатия кнопки генерации
             document.getElementById('genBtn').addEventListener('click', function() {
                 var kshID = Number(document.getElementById("numksh").value);
