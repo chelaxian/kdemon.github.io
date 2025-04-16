@@ -38,6 +38,24 @@
                 margin: 0 auto;
             }
         }
+        
+        /* Оптимизация изображений - версия 1.0.1 */
+        img, svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .svg-scheme {
+            max-width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .svg-scheme {
+                max-width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
