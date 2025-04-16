@@ -71,6 +71,24 @@
                 padding: 15px;
             }
         }
+        
+        /* Оптимизация изображений - версия 1.0.1 */
+        img, svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .svg-scheme {
+            max-width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .svg-scheme {
+                max-width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -194,13 +212,13 @@
                     <div class="uk-card uk-card-default uk-card-body">
                         <div class="stencil-preview-container">
                             <a href="../img/preview/Continent_01.png" data-lightbox="seccode" data-title="Континент 3D">
-                                <img class="preview-image uk-margin-small" src="../img/preview/Continent_01_thumb.png" alt="Континент 3D">
+                                <img class="preview-image uk-margin-small" src="../img/preview/Continent_01_thumb.png" alt="Континент 3D" loading="lazy">
                             </a>
                             <a href="../img/preview/Continent_02.png" data-lightbox="seccode" data-title="Континент Front">
-                                <img class="preview-image uk-margin-small" src="../img/preview/Continent_02_thumb.png" alt="Континент Front">
+                                <img class="preview-image uk-margin-small" src="../img/preview/Continent_02_thumb.png" alt="Континент Front" loading="lazy">
                             </a>
                             <a href="../img/preview/Continent_03.png" data-lightbox="seccode" data-title="Континент Other">
-                                <img class="preview-image uk-margin-small" src="../img/preview/Continent_03_thumb.png" alt="Континент Other">
+                                <img class="preview-image uk-margin-small" src="../img/preview/Continent_03_thumb.png" alt="Континент Other" loading="lazy">
                             </a>
                         </div>
                     </div>
